@@ -1,0 +1,7 @@
+name: Laverne
+type: module
+description: 'Laverne is used to manage shURLy short URLs.'
+core_version_requirement: ^10 || ^11
+package: OSU
+dependencies:
+  - shurly:shurly
