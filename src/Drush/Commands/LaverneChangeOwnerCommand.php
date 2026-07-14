@@ -34,7 +34,32 @@ final class LaverneChangeOwnerCommand extends Command
         parent::__construct();
     }
 
-    public function doExecute(InputInterface $input, OutputInterface $output, string $onid, string $url): bool
+    #[\Override]
+    public function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $io = new DrushStyle($input, $output);
+        $results = $this->doExecute($input, $output, $input->getArgument('onid'), $input->getArgument('url'));
+
+        if ($results) {
+            $io->success(\sprintf('Changed owner of %s to ONID %s', $input->getArgument('url'), $input->getArgument('onid')));
+
+            return Command::SUCCESS;
+        }
+        $io->error(\sprintf('Failed to change owner of %s to ONID %s', $input->getArgument('url'), $input->getArgument('onid')));
+
+        return Command::FAILURE;
+    }
+
+    #[\Override]
+    protected function configure(): void
+    {
+        $this->setHelp('Change the owner of a shURLy URL slug.')
+        ->addArgument('onid', InputArgument::REQUIRED, "A user's ONID")
+        ->addArgument('url', InputArgument::REQUIRED, 'The shURLy URL slug to chang the owner for.')
+        ->addUsage('laverne:change-owner beaverb aBc');
+    }
+
+    private function doExecute(InputInterface $input, OutputInterface $output, string $onid, string $url): bool
     {
         $uid = $this->db->select('authmap', 'am')
         ->fields('am', ['uid'])
@@ -65,30 +90,5 @@ final class LaverneChangeOwnerCommand extends Command
         );
 
         return true;
-    }
-
-    #[\Override]
-    public function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $io = new DrushStyle($input, $output);
-        $results = $this->doExecute($input, $output, $input->getArgument('onid'), $input->getArgument('url'));
-
-        if ($results) {
-            $io->success(\sprintf('Changed owner of %s to ONID %s', $input->getArgument('url'), $input->getArgument('onid')));
-
-            return Command::SUCCESS;
-        }
-        $io->error(\sprintf('Failed to change owner of %s to ONID %s', $input->getArgument('url'), $input->getArgument('onid')));
-
-        return Command::FAILURE;
-    }
-
-    #[\Override]
-    protected function configure(): void
-    {
-        $this->setHelp('Change the owner of a shURLy URL slug.')
-        ->addArgument('onid', InputArgument::REQUIRED, "A user's ONID")
-        ->addArgument('url', InputArgument::REQUIRED, 'The shURLy URL slug to chang the owner for.')
-        ->addUsage('laverne:change-owner beaverb aBc');
     }
 }

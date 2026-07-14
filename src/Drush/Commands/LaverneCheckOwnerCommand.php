@@ -40,7 +40,7 @@ final class LaverneCheckOwnerCommand extends Command
     public const string NAME = 'laverne:check-owner';
 
     public function __construct(
-        private readonly FormatterManager $formatter,
+        private readonly FormatterManager $formatterManager,
         private readonly Connection $db,
     ) {
         parent::__construct();
@@ -50,7 +50,6 @@ final class LaverneCheckOwnerCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $results = $this->doExecute($input, $output, (string) $input->getArgument('url'));
-
         $this->writeFormattedOutput($input, $output, $results);
 
         return Command::SUCCESS;
