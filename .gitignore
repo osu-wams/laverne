@@ -7,3 +7,5 @@ composer.lock
 /.vim
 /.nvim.lua
 /.vscode
+# Ignore cache builds
+/*.cache
